@@ -99,6 +99,7 @@ def roll_dice():
 def play_monopoly(n, board, bank, player_list):
 
     print("****** At the start of the game: ********")
+
     board.print()
     print("")
     print("Bank's Properties: ")
@@ -137,7 +138,8 @@ def play_monopoly(n, board, bank, player_list):
             player.play(board)
             print("player name: ",player.name)
             print ("sum rolled:",player.list_of_numbers_rolled)
-            print("location: ",player.locations_visited_by_player)
+            print("square number visited: ",player.locations_visited_by_player)
+            print( "square visited: ", board.get_square( player.locations_visited_by_player[-1] ).title )
             print("")
             print("*******************")
 
@@ -157,10 +159,10 @@ def createPlayers(n, bank):
 def main():
     start_time = time.time()
 
-    the_bank = Bank(16550)
+    the_bank = Bank.Instance()
     number_of_players = 2
     the_players = createPlayers(number_of_players, the_bank)
-    game_board = MonopolyBoard(the_bank, the_players)
+    game_board = MonopolyBoard( the_players, the_bank)
     number_of_simulations = 1
     play_monopoly(number_of_simulations, game_board, the_bank, the_players)
 
