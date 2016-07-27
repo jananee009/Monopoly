@@ -12,10 +12,14 @@ class Player(Actor):
         self.list_of_numbers_rolled = []
         self.locations_visited_by_player = []
         self.just_visiting_jail = True
+        self.get_out_of_jail_free_card = False # player does not have the "get out of jail free" card.
+        self.total_number_of_houses_owned = 0 # Initially player owns 0 houses
+        self.total_number_of_hotels_owned = 0 # Initially player owns 0 hotels
 
     def roll_dice(self):
         dice1 = random.randint(1, 6)  # roll 2 six-sided dice.
         dice2 = random.randint(1, 6)
+
         self.sum_of_numbers_rolled_on_dice = dice1 + dice2  # sum of the numbers rolled on both dice.
         self.list_of_numbers_rolled.append(self.sum_of_numbers_rolled_on_dice)
 
@@ -61,6 +65,7 @@ class Player(Actor):
         take_another_turn = False
 
         square = game_board.get_square(self.location_on_board)
+
         square.take_action(self)
         # if 0 < number_of_doubles < 3:
         #     take_another_turn = True
