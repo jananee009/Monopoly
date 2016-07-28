@@ -15,6 +15,7 @@ class Player(Actor):
         self.get_out_of_jail_free_card = False # player does not have the "get out of jail free" card.
         self.total_number_of_houses_owned = 0 # Initially player owns 0 houses
         self.total_number_of_hotels_owned = 0 # Initially player owns 0 hotels
+        self.game_board = None
 
     def roll_dice(self):
         dice1 = random.randint(1, 6)  # roll 2 six-sided dice.
@@ -32,13 +33,17 @@ class Player(Actor):
             self.consecutive_doubles_counter = 0 #reset the number of times player rolled a double.
 
 
-    def play(self, board):
+    def play(self):
 
         self.roll_dice()
 
+        self.move_and_take_action()
+
+    def move_and_take_action(self):
+
         self.move()
 
-        self.take_action(board)
+        self.take_action()
 
     def move (self):
 
@@ -61,10 +66,10 @@ class Player(Actor):
 
 
 
-    def take_action(self, game_board):
+    def take_action(self):
         take_another_turn = False
 
-        square = game_board.get_square(self.location_on_board)
+        square = self.game_board.get_square(self.location_on_board)
 
         square.take_action(self)
         # if 0 < number_of_doubles < 3:

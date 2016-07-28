@@ -135,7 +135,7 @@ def play_monopoly(n, board, bank, player_list):
         for player in players:
 
             # Player rolls dice to determine new position
-            player.play(board)
+            player.play()
             print("player name: ",player.name)
             print ("sum rolled:",player.list_of_numbers_rolled)
             print("square number visited: ",player.locations_visited_by_player)
@@ -145,6 +145,7 @@ def play_monopoly(n, board, bank, player_list):
 
             number_of_throws_each += 1
         board.print()
+        print("Bank's liquid cash: ",bank.cash)
     return
 
 
@@ -163,6 +164,8 @@ def main():
     number_of_players = 2
     the_players = createPlayers(number_of_players, the_bank)
     game_board = MonopolyBoard( the_players, the_bank)
+    for player in the_players:
+        player.game_board = game_board
     number_of_simulations = 1
     play_monopoly(number_of_simulations, game_board, the_bank, the_players)
 
