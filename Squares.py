@@ -100,7 +100,7 @@ class Jail(Square):
     # find out if player is "Just Visiting" or "sent to jail".
     # if   "sent to jail" do something
 
-class GoToJail(Square):
+class GoToJailSquare(Square):
     def __init__(self, _position, _title, jail):
         Square.__init__(self, _position, _title)
         self.jail = jail
@@ -113,17 +113,18 @@ class GoToJail(Square):
     # implement "sending the player to jail" method
 
 class CommunityChest(Square):
-    def __init__(self, _position, _title):
+    def __init__(self, _position, _title, community_chest_card_deck):
         Square.__init__(self, _position, _title)
+        self.community_chest_card_deck = community_chest_card_deck
 
     def take_action(self, player):
-        cc_card_drawn = self.community_chest_card_deck.popleft()
-        self.community_chest_card_deck.append(cc_card_drawn)
-
+        card_drawn = self.community_chest_card_deck.popleft()  # player draws a card from the top of the deck
+        card_drawn.take_action()
 
 class Chance(Square):
-    def __init__(self, _position, _title):
+    def __init__(self, _position, _title, chance_card_deck):
         Square.__init__(self, _position, _title)
+        self.chance_card_deck = chance_card_deck
 
     def take_action(self, player):
         cc_card_drawn = self.chance_card_deck.popleft()
