@@ -2,188 +2,272 @@ from Bank import Bank
 
 class Card:
      bank = Bank.Instance()
-     def __init__(self, n, card_title):
-         self.card_number = n
-         self.title = card_title
+
+class DoctorFee(Card):
+     def take_action(self, player ):
+         player.cash -= 50
+         Card.bank.cash += 50
+
+class PayHospitalBill(Card):
+    def take_action(self, player ):
+        player.cash -= 100
+        Card.bank.cash += 100
 
 
-
-     def take_action(self, card_type, card_title, player):
-
-          if card_title =="Advance To Go":
-              player.location_on_board = 0
-              player.cash += 200
-              Card.bank.cash -= 200
-              return
-
-          if card_title == "Go To Jail":
-              player.location_on_board = 10
-              # implement logic to not collect $200 while passing go.
-              return
-
-          if card_title == "Get Out Of Jail Free":
-              player.get_out_of_jail_free_card = True
-              return
-
-          if card_type == "Community Chest":
-              if card_title == "Doctor's Fee":
-                  player.cash -= 50
-                  Card.bank.cash += 50
-                  return
-
-              if card_title == "Pay Hospital Bill":
-                  player.cash -= 100
-                  Card.bank.cash += 100
-                  return
-
-              if card_title == "Pay School Tax":
-                  player.cash -= 150
-                  Card.bank.cash += 150
-                  return
-
-              if card_title == "Assessed For Street Repairs":
-                  street_repairs_cost = ((40*player.total_number_of_houses_owned) + (115*player.total_number_of_hotels_owned))
-                  player.cash -= street_repairs_cost
-                  Card.bank.cash += street_repairs_cost
-                  return
-
-              if card_title == "Life Insurance Matures":
-                  player.cash += 100
-                  Card.bank.cash -= 100
-                  return
-
-              if card_title == "Sale Of Stock":
-                  player.cash += 45
-                  Card.bank.cash -= 45
-                  return
-
-              if card_title == "2nd Price In Beauty Contest":
-                  player.cash += 10
-                  Card.bank.cash -= 10
-                  return
-
-              if card_title == "You Inherit":
-                  player.cash += 100
-                  Card.bank.cash -= 100
-                  return
-
-              if card_title == "Receive For Services":
-                  player.cash += 25
-                  Card.bank.cash -= 25
-                  return
-
-              if card_title == "Income Tax Refund":
-                  player.cash += 20
-                  Card.bank.cash -= 20
-                  return
-
-              if card_title == "Xmas Fund Matures":
-                  player.cash += 100
-                  Card.bank.cash -= 100
-                  return
-
-              if card_title == "Bank Error In Your Favor":
-                  player.cash += 200
-                  Card.bank.cash -= 200
-                  return
-
-              if card_title == "Grand Opera Opening":
-                  # TODO : implement logic for collecting $50 from each player.
-                  return
+class PaySchoolTax(Card):
+    def take_action(self, player ):
+        player.cash -= 150
+        Card.bank.cash += 150
 
 
-          if card_type == "Chance": # chance cards
+class StockSale(Card):
+    def take_action(self, player ):
+        player.cash += 45
+        Card.bank.cash -= 45
 
-              if card_title == "Go Back 3 spaces":
-                  player.location_on_board -= 3
-                  # TODO: implement the following
-                  # going back 3 spaces on the board can land the player in one of the following squares:
-                  # a) Income Tax
-                  # b) New York Avenue
-                  # c) Community Chest
-                  return
+class StreetRepairs(Card):
+    def take_action(self, player ):
+        street_repairs_cost = ((40*player.total_number_of_houses_owned) + (115*player.total_number_of_hotels_owned))
+        player.cash -= street_repairs_cost
+        Card.bank.cash += street_repairs_cost
 
-              if card_title == "Advance To Illinois":
-                  if player.location_on_board == 36: # check the player's current location
-                   # the player has to pass through Go to advance to illinois ave. Hence he collects $200.
-                      player.cash += 200
-                      Card.bank.cash -= 200
+class LifeInsuranceMaturity(Card):
+    def take_action(self, player ):
+        player.cash += 100
+        Card.bank.cash -= 100
 
-                  # if the player is located on other Chance Squares, he will not pass "Go" to advance to Illinois Ave.
-                  player.location_on_board = 24
-                  # TODO implement logic to buy / pay rent for Illinois Ave.
-                  return
+class BeautyContest(Card):
+    def take_action(self, player ):
+        player.cash += 10
+        Card.bank.cash -= 10
 
-              if card_title ==   "Advance To BoardWalk":
-                  player.location_on_board = 39
-                  # TODO implement logic to buy / pay rent for BoardWalk
-                  return
+class YouInherit(Card):
+    def take_action(self, player ):
+        player.cash += 100
+        Card.bank.cash -= 100
 
-              if  card_title ==   "Advance To  St. Charles Place":
-                  if player.location_on_board in [36, 22]:
-                      # the player has to pass through Go to advance to St. Charles Place Hence he collects $200.
-                      player.cash += 200
-                      Card.bank.cash -= 200
+class ReceiveForServices(Card):
+    def take_action(self, player ):
+        player.cash += 25
+        Card.bank.cash -= 25
 
-                  player.location_on_board = 11
-                  # TODO implement logic to buy / pay rent for St. Charles Place
-                  return
+class IncomeTaxRefund(Card):
+    def take_action(self, player ):
+        player.cash += 20
+        Card.bank.cash -= 20
+
+class XmasFund(Card):
+    def take_action(self, player ):
+        player.cash += 100
+        Card.bank.cash -= 100
+
+class BankError(Card):
+    def take_action(self, player ):
+        player.cash += 200
+        Card.bank.cash -= 200
+
+class GrandOperaOpening(Card):
+    def __init__(self, players):
+        self.players = players
+    def take_action(self, player ):
+        for p in self.players:
+            if(p != player):
+                p.cash -= 50
+                player.cash += 50
+
+class GoBack3Spaces(Card):
+    def take_action(self, player ):
+        player.sum_of_numbers_rolled_on_dice = -3
+        player.move_and_take_action()
+
+class AdvanceToIllinois(Card):
+    def take_action(self, player ):
+        if player.location_on_board == 36: # check the player's current location
+            # the player has to pass through Go to advance to illinois ave. Hence he collects $200.
+            player.cash += 200
+            Card.bank.cash -= 200
+            player.sum_of_numbers_rolled_on_dice = 28
+            player.move_and_take_action()
+        elif player.location_on_board == 7: # check the player's current location
+            player.sum_of_numbers_rolled_on_dice = 17
+            player.move_and_take_action()
+        elif player.location_on_board == 22: # check the player's current location
+            player.sum_of_numbers_rolled_on_dice = 2
+            player.move_and_take_action()
+        else:
+            print("Cannot come here")
+
+class AdvanceToBoardWalk(Card):
+    def take_action(self, player):
+        if player.location_on_board == 36:  # check the player's current location
+            player.sum_of_numbers_rolled_on_dice =3
+            player.move_and_take_action()
+        elif player.location_on_board == 7:  # check the player's current location
+            player.sum_of_numbers_rolled_on_dice = 32
+            player.move_and_take_action()
+        elif player.location_on_board == 22:  # check the player's current location
+            player.sum_of_numbers_rolled_on_dice = 17
+            player.move_and_take_action()
+        else:
+            print("Cannot come here")
+
+class AdvanceToStCharlesPlace(Card):
+    def take_action(self, player):
+        if player.location_on_board == 36:  # check the player's current location
+            # the player has to pass through Go to advance to St. Charles Place Hence he collects $200.
+            player.cash += 200
+            Card.bank.cash -= 200
+
+            player.sum_of_numbers_rolled_on_dice = 15
+            player.move_and_take_action()
+
+        elif player.location_on_board == 7:  # check the player's current location
+            player.sum_of_numbers_rolled_on_dice = 4
+            player.move_and_take_action()
+
+        elif player.location_on_board == 22:  # check the player's current location
+            # the player has to pass through Go to advance to St. Charles Place Hence he collects $200.
+            player.cash += 200
+            Card.bank.cash -= 200
+
+            player.sum_of_numbers_rolled_on_dice = 29
+            player.move_and_take_action()
+        else:
+            print("Cannot come here")
+
+class BuildingAndLoanMatures(Card):
+    def take_action(self, player):
+        player.cash += 200
+        Card.bank.cash -= 200
+
+class BankPaysYouADividend(Card):
+    def take_action(self, player):
+        player.cash += 50
+        Card.bank.cash -= 50
 
 
-              if  card_title ==   "Building And Loan Matures":
-                  player.cash += 200
-                  Card.bank.cash -= 200
-                  return
+class PayPoorTax(Card):
+    def take_action(self, player):
+        player.cash -= 15
+        Card.bank.cash += 15
 
-              if  card_title ==   "Bank Pays You A Dividend":
-                  player.cash += 50
-                  Card.bank.cash -= 50
-                  return
 
-              if card_title == "Pay Poor Tax":
-                  player.cash -= 15
-                  Card.bank.cash += 15
-                  return
+class GeneralRepairs(Card):
+    def take_action(self, player):
+        general_repairs_cost = ((25 * player.total_number_of_houses_owned) + (100 * player.total_number_of_hotels_owned))
+        player.cash -= general_repairs_cost
+        Card.bank.cash += general_repairs_cost
+        return
 
-              if card_title == "Make General Repairs On All Your Property":
-                  general_repairs_cost = ((25 * player.total_number_of_houses_owned) + (100 * player.total_number_of_hotels_owned))
-                  player.cash -= general_repairs_cost
-                  Card.bank.cash += general_repairs_cost
-                  return
+class YouAreElectedBoardChairman(Card):
+    def __init__(self, players):
+        self.players = players
 
-              if  card_title == "You Are Elected Board Chairman":
-                  # TODO : implement logic for paying $50 to each player.
-                  return
+    def take_action(self, player): # pay each player $50
+        for p in self.players:
+            if (p != player):
+                p.cash += 50
+                player.cash -= 50
+        return
 
-              if card_title ==  "Advance To Nearest Utility":
-                  if player.location_on_board in [7,36]:
-                      player.location_on_board = 12
 
-                  else:
-                      player.location_on_board = 28
+class AdvanceToNearestUtility(Card):
+    def take_action(self, player):
+        # TODO If utility is already owned by some other player, pay rent = 10*(amount thrown on dice) to owner.
+        if player.location_on_board == 36:  # check the player's current location
+            # the player has to pass through Go to advance to St. Charles Place Hence he collects $200.
+            player.cash += 200
+            Card.bank.cash -= 200
 
-                  # TODO: implement logic for either buying it or paying 10*amt shown on dice as rent.
-                  return
+            player.sum_of_numbers_rolled_on_dice = 16
+            player.move_and_take_action()
 
-              if card_title == "Advance To Nearest RailRoad":
-                  if player.location_on_board == 7:
-                      player.location_on_board = 15
+        elif player.location_on_board == 7:  # check the player's current location
+            player.sum_of_numbers_rolled_on_dice = 5
+            player.move_and_take_action()
 
-                  elif player.location_on_board == 22:
-                      player.location_on_board = 25
+        elif player.location_on_board == 22:  # check the player's current location
+            player.sum_of_numbers_rolled_on_dice = 6
+            player.move_and_take_action()
+        else:
+            print("Cannot come here")
 
-                  elif player.location_on_board == 36:
-                      player.location_on_board = 5
+class AdvanceToNearestRailRoad(Card):
+    def take_action(self, player):
 
-                  # TODO   implement logic for either buying it or paying 2*rent entitled to owner.
-                  return
+        # TODO if railraod already owned, player pays twice the rent the owner is entitled to.
+        if player.location_on_board == 36:  # check the player's current location
+            # the player has to pass through Go to advance to St. Charles Place Hence he collects $200.
+            player.cash += 200
+            Card.bank.cash -= 200
 
-              if card_title == "Take A Ride On Reading":
-                  player.location_on_board = 5
-                  player.cash += 200
-                  Card.bank.cash -= 200
-                  # TODO: If Reading is already owned, should player pay rent or buy it? Nothing is mentioned on the card.
-                  return
+            player.sum_of_numbers_rolled_on_dice = 9
+            player.move_and_take_action()
+
+        elif player.location_on_board == 7:  # check the player's current location
+            player.sum_of_numbers_rolled_on_dice = 8
+            player.move_and_take_action()
+
+        elif player.location_on_board == 22:  # check the player's current location
+            player.sum_of_numbers_rolled_on_dice = 3
+            player.move_and_take_action()
+        else:
+            print("Cannot come here")
+
+        return
+
+class TakeARideOnReading(Card):
+    def take_action(self, player):
+        if player.location_on_board == 36:  # check the player's current location
+
+            player.sum_of_numbers_rolled_on_dice = 9
+
+        elif player.location_on_board == 7:  # check the player's current location
+            player.sum_of_numbers_rolled_on_dice = 38
+
+        elif player.location_on_board == 22:  # check the player's current location
+            player.sum_of_numbers_rolled_on_dice = 23
+
+        else:
+            print("Cannot come here")
+
+        # the player has to pass through Go to advance to Reading Railraod. Hence he collects $200
+        player.cash += 200
+        Card.bank.cash -= 200
+
+        player.move_and_take_action()
+
+        return
+
+class AdvanceToGo(Card):
+    def take_action(self, player):
+          player.location_on_board = 0
+          player.cash += 200
+          Card.bank.cash -= 200
+          return
+
+class GetOutOfJailFree(Card):
+    def take_action(self, player):
+        player.get_out_of_jail_free_card = True
+        return
+
+class GoToJail(Card):
+
+    def take_action(self, player):
+        if player.location_on_board == 36:  # check the player's current location
+
+            player.sum_of_numbers_rolled_on_dice = 14
+            player.move_and_take_action()
+
+        elif player.location_on_board == 7:  # check the player's current location
+            player.sum_of_numbers_rolled_on_dice = 3
+            player.move_and_take_action()
+
+        elif player.location_on_board == 22:  # check the player's current location
+            player.sum_of_numbers_rolled_on_dice = 28
+            player.move_and_take_action()
+        else:
+            print("Cannot come here")
 
 
 
