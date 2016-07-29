@@ -1,6 +1,7 @@
 from  collections import deque
 import random
 from Bank import Bank
+from util import *
 
 class Square:
     bank = Bank.Instance()
@@ -21,11 +22,14 @@ class Property(Square):
         self.change_owner(Square.bank) # assign bank as the initial owner of the property
 
 
-    def take_action(self, player):
+    def buy_property(self, player):
         if self.owner == Square.bank:
-            player.cash -= self.price
-            Square.bank.cash += self.price
-            self.change_owner(player)
+            if(player.cash >= self.price):
+                printmessage("Buys " + self.title)
+                player.cash -= self.price
+                Square.bank.cash += self.price
+                self.change_owner(player)
+
 
     def change_owner(self, _owner):
         if self.owner != None:
@@ -34,12 +38,16 @@ class Property(Square):
         _owner.add_property(self)
 
     def __str__(self):
-        return self.title + ", " + str(self.owner)
+        #return self.title + ", " + str(self.owner)
+        return self.title
 
     def __repr__(self):
-        return self.title + ", " + str(self.owner)
+        #return self.title + ", " + str(self.owner)
+        return  self.title
 
-
+def move_cash(giver, receiver, cash):
+    giver.cash -= cash
+    receiver.cash += cash
 
 class Land(Property):
     def __init__(self, _position,  _title, _price, _title_deed_info):
@@ -47,6 +55,11 @@ class Land(Property):
         self.colorGroup, self.rent_of_unimproved_lot, self.rent_1_house, self.rent_2_houses, self.rent_3_houses, self.rent_4_houses, \
         self.hotel_rent, self.mortgage_value, self.cost_1_house, self.cost_1_hotel = _title_deed_info
 
+    def take_action(self, player):
+        if self.owner == Square.bank:
+            Property.buy_property(self, player)
+        elif self.owner != player:
+            move_cash(player, self.owner, self.rent_of_unimproved_lot)
 
 class RailRoad(Property):
     def __init__(self, _position,  _title, _price,  _title_deed_info):
@@ -54,14 +67,23 @@ class RailRoad(Property):
         self.rent_1_rr, self.rent_2_rr, self.rent_3_rr, self.rent_4_rr, self.mortgage_value = _title_deed_info
 
 
+    def take_action(self, player):
+        if self.owner == Square.bank:
+            Property.buy_property(self, player)
+        elif self.owner != player:
+            move_cash(player, self.owner, self.rent_1_rr)
+
 class Utility(Property):
     def __init__(self, _position,  _title, _price,  _title_deed_info):
         Property.__init__(self, _position, _title, _price)
         self.rent_1_uc, self.rent_2_uc = _title_deed_info
 
 
-
-
+    def take_action(self, player):
+        if self.owner == Square.bank:
+            Property.buy_property(self, player)
+        elif self.owner != player:
+            move_cash(player, self.owner, self.rent_1_uc)
 
 
 class Go(Square):
@@ -71,10 +93,6 @@ class Go(Square):
     def take_action(self, player):
         player.cash += 200
         Square.bank.cash -= 200
-
-        # to do
-        # implement a method to give each player $200 as they pass Go
-
 
 
 class Tax(Square):
@@ -95,8 +113,13 @@ class Jail(Square):
 
     # to do
     def take_action(self, player):
-        player.cash -= self.fine
-        Square.bank.cash += self.fine
+        if player.just_visiting_jail:
+            pass
+        else:
+            # player is sent to jail. He will pay fine to get out.
+            player.cash -= self.fine
+            Square.bank.cash += self.fine
+            player.just_visiting_jail = True
     # find out if player is "Just Visiting" or "sent to jail".
     # if   "sent to jail" do something
 
@@ -106,6 +129,7 @@ class GoToJailSquare(Square):
         self.jail = jail
 
     def take_action(self, player):
+        player.just_visiting_jail = False
         player.location_on_board = self.jail.location_of_square_on_board
         self.jail.take_action(player)
 
@@ -119,7 +143,9 @@ class CommunityChest(Square):
 
     def take_action(self, player):
         card_drawn = self.community_chest_card_deck.popleft()  # player draws a card from the top of the deck
-        card_drawn.take_action()
+        printmessage("Community Chest Card drawn is: " + card_drawn.__class__.__name__)
+        card_drawn.take_action(player)
+        self.community_chest_card_deck.append(card_drawn)
 
 class Chance(Square):
     def __init__(self, _position, _title, chance_card_deck):
@@ -127,7 +153,16 @@ class Chance(Square):
         self.chance_card_deck = chance_card_deck
 
     def take_action(self, player):
-        cc_card_drawn = self.chance_card_deck.popleft()
-        self.chance_card_deck.append(cc_card_drawn)
+        card_drawn = self.chance_card_deck.popleft()
+        printmessage("Chance Card drawn is: " + card_drawn.__class__.__name__)
+        card_drawn.take_action(player)
+        self.chance_card_deck.append(card_drawn)
 
 
+class FreeParking(Square):
+    def __init__(self, _position, _title):
+        Square.__init__(self, _position, _title)
+
+    def take_action(self, player):
+       pass
+       # Player does nothing if he lands at Free Parking Square

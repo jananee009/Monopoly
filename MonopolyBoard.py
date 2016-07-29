@@ -2,30 +2,33 @@ from Squares import *
 from collections import deque
 import random
 from Card import *
-
+from util import *
 
 
 class MonopolyBoard:
     def __init__(self,  players, bank):
         # create all the squares of the game board.
         self.squares = {}
-        #self.bank = bank
         self.players = players
+
         self.chance_squares = [7, 22, 36]
         self.community_chest_squares = [2, 17, 33]
 
 
+        # create a randomly shuffled deck of community chest cards
         self.community_chest_card_deck = []
-        self.chance_card_deck = []
         orig_comm_chest = self.createCommunityChestCards()
-        orig_chance = self.createChanceCards()
         random.shuffle(orig_comm_chest)
         self.community_chest_card_deck = deque(orig_comm_chest)
+
+        # create a randomly shuffled deck of chance cards
+        self.chance_card_deck = []
+        orig_chance = self.createChanceCards()
         random.shuffle(orig_chance)
         self.chance_card_deck = deque(orig_chance)
 
         self.populate_squares()
-
+        self.bank = bank
 
     def populate_squares(self):
 
@@ -173,7 +176,7 @@ class MonopolyBoard:
 
 
         # Free Parking
-        free_parking = Square(20, "Free Parking")
+        free_parking = FreeParking(20, "Free Parking")
         self.squares[20] = free_parking
 
         # Go To Jail
@@ -190,6 +193,7 @@ class MonopolyBoard:
         for j in self.chance_squares:
             chance = Chance(j, "Chance", self.chance_card_deck)
             self.squares[j] = chance
+
 
 
     def createCommunityChestCards(self):
@@ -218,18 +222,18 @@ class MonopolyBoard:
         chance_card_deck.append(GetOutOfJailFree())
         chance_card_deck.append(GoToJail())
         chance_card_deck.append(AdvanceToNearestUtility())
-        chance_card_deck.append(AdvanceToIllinois)
-        chance_card_deck.append(AdvanceToBoardWalk)
-        chance_card_deck.append(AdvanceToNearestRailRoad)
-        chance_card_deck.append(GoBack3Spaces)
-        chance_card_deck.append(AdvanceToStCharlesPlace)
-        chance_card_deck.append(TakeARideOnReading)
-        chance_card_deck.append(AdvanceToNearestRailRoad)
-        chance_card_deck.append(BankPaysYouADividend)
-        chance_card_deck.append(BuildingAndLoanMatures)
-        chance_card_deck.append(PayPoorTax)
-        chance_card_deck.append(YouAreElectedBoardChairman)
-        chance_card_deck.append(GeneralRepairs)
+        chance_card_deck.append(AdvanceToIllinois())
+        chance_card_deck.append(AdvanceToBoardWalk())
+        chance_card_deck.append(AdvanceToNearestRailRoad())
+        chance_card_deck.append(GoBack3Spaces())
+        chance_card_deck.append(AdvanceToStCharlesPlace())
+        chance_card_deck.append(TakeARideOnReading())
+        chance_card_deck.append(AdvanceToNearestRailRoad())
+        chance_card_deck.append(BankPaysYouADividend())
+        chance_card_deck.append(BuildingAndLoanMatures())
+        chance_card_deck.append(PayPoorTax())
+        chance_card_deck.append(YouAreElectedBoardChairman(self.players))
+        chance_card_deck.append(GeneralRepairs())
         return chance_card_deck
 
 
@@ -238,25 +242,47 @@ class MonopolyBoard:
         return self.squares[location]
 
     def printJustTheBoard(self):
-        print("")
-        print("printing just the board................")
+        printmessage("")
+        printmessage("printing just the board................")
         for i in range(40):
-            print(i, ":",self.squares[i].title )
-        print("")
+            printmessage(i, ":",self.squares[i].title )
+        printmessage("")
         return
 
+    def printChanceCardDeck(self):
+        printmessage("Chance Cards:")
+        for c in self.chance_card_deck:
+            printmessage(c.__class__.__name__)
+        return
 
-    def print(self):
+    def printCommunityChestCardDeck(self):
+        printmessage("Community chest cards:")
+        for c in self.community_chest_card_deck:
+            printmessage(c.__class__.__name__)
+        return
+
+    def printmessage(self):
+        printmessage("")
+        printmessage("")
+        printmessage("********* MONOPOLY BOARD STATUS***************")
+        printmessage("Bank's cash: " + str(self.bank.cash))
         for player in self.players:
-            print(player.name, ": ")
-            print("Location :", player.location_on_board)
-            print("Cash :", player.cash)
-            print("Property :", player.properties)
+            printmessage(player.name + ": ")
+            printmessage("Current Location : "+ str(player.location_on_board))
+            printmessage("Cash Owned:"+ str(player.cash))
+            printmessage("Properties Owned:" + str(player.properties))
             print ("**********************************")
+        #self.printChanceCardDeck()
+        #printmessage("**********************************")
+        #self.printCommunityChestCardDeck()
+        #printmessage("**********************************")
 
 
 
 
 
-        #   community_chest_card_dict = {1: advance_to_go, 2: go_to_jail}
+
+
+
+
 

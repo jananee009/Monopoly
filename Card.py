@@ -1,4 +1,5 @@
 from Bank import Bank
+from util import *
 
 class Card:
      bank = Bank.Instance()
@@ -95,7 +96,7 @@ class AdvanceToIllinois(Card):
             player.sum_of_numbers_rolled_on_dice = 2
             player.move_and_take_action()
         else:
-            print("Cannot come here")
+            printmessage("Cannot come here")
 
 class AdvanceToBoardWalk(Card):
     def take_action(self, player):
@@ -109,7 +110,7 @@ class AdvanceToBoardWalk(Card):
             player.sum_of_numbers_rolled_on_dice = 17
             player.move_and_take_action()
         else:
-            print("Cannot come here")
+            printmessage("Cannot come here")
 
 class AdvanceToStCharlesPlace(Card):
     def take_action(self, player):
@@ -133,7 +134,7 @@ class AdvanceToStCharlesPlace(Card):
             player.sum_of_numbers_rolled_on_dice = 29
             player.move_and_take_action()
         else:
-            print("Cannot come here")
+            printmessage("Cannot come here")
 
 class BuildingAndLoanMatures(Card):
     def take_action(self, player):
@@ -157,7 +158,6 @@ class GeneralRepairs(Card):
         general_repairs_cost = ((25 * player.total_number_of_houses_owned) + (100 * player.total_number_of_hotels_owned))
         player.cash -= general_repairs_cost
         Card.bank.cash += general_repairs_cost
-        return
 
 class YouAreElectedBoardChairman(Card):
     def __init__(self, players):
@@ -190,7 +190,7 @@ class AdvanceToNearestUtility(Card):
             player.sum_of_numbers_rolled_on_dice = 6
             player.move_and_take_action()
         else:
-            print("Cannot come here")
+            printmessage("Cannot come here")
 
 class AdvanceToNearestRailRoad(Card):
     def take_action(self, player):
@@ -212,7 +212,7 @@ class AdvanceToNearestRailRoad(Card):
             player.sum_of_numbers_rolled_on_dice = 3
             player.move_and_take_action()
         else:
-            print("Cannot come here")
+            printmessage("Cannot come here")
 
         return
 
@@ -229,7 +229,7 @@ class TakeARideOnReading(Card):
             player.sum_of_numbers_rolled_on_dice = 23
 
         else:
-            print("Cannot come here")
+            printmessage("Cannot come here")
 
         # the player has to pass through Go to advance to Reading Railraod. Hence he collects $200
         player.cash += 200
@@ -257,6 +257,8 @@ class GoToJail(Card):
         if player.location_on_board == 36:  # check the player's current location
 
             player.sum_of_numbers_rolled_on_dice = 14
+            player.collectSalary = False
+            player.just_visiting_jail = False
             player.move_and_take_action()
 
         elif player.location_on_board == 7:  # check the player's current location
@@ -265,9 +267,30 @@ class GoToJail(Card):
 
         elif player.location_on_board == 22:  # check the player's current location
             player.sum_of_numbers_rolled_on_dice = 28
+            player.collectSalary = False
+            player.just_visiting_jail = False
             player.move_and_take_action()
+
+        elif player.location_on_board == 22:  # Player is on Community Chest Square
+            player.sum_of_numbers_rolled_on_dice = 8
+            player.collectSalary = False
+            player.just_visiting_jail = False
+            player.move_and_take_action()
+
+        elif player.location_on_board == 17:  # Player is on Community Chest Square
+            player.sum_of_numbers_rolled_on_dice = 33
+            player.collectSalary = False
+            player.just_visiting_jail = False
+            player.move_and_take_action()
+
+        elif player.location_on_board == 33:  # Player is on Community Chest Square
+            player.sum_of_numbers_rolled_on_dice = 17
+            player.collectSalary = False
+            player.just_visiting_jail = False
+            player.move_and_take_action()
+
         else:
-            print("Cannot come here")
+            printmessage("Cannot come here")
 
 
 

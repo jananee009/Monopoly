@@ -64,7 +64,8 @@ from MonopolyBoard import MonopolyBoard
 from Bank import Bank
 from Player import Player
 from operator import itemgetter
-
+from util import *
+from os.path import abspath, expanduser
 
 
 
@@ -92,60 +93,70 @@ def determinePlayOrder(total_number_of_players):
             continue
 
 
-
+'''
 def roll_dice():
     return (random.randint(1,6)+random.randint(1,6))
-
+'''
 def play_monopoly(n, board, bank, player_list):
 
-    print("****** At the start of the game: ********")
+    printmessage("****** RIGHT BEFORE GAME BEGINS: ********")
+    printmessage("")
+    #printmessage("Bank's Properties: ")
+    #printmessage(len(bank.properties))
+    #printmessage([property for property in bank.properties])
+    board.printmessage()
+    printmessage("")
 
-    board.print()
-    print("")
-    print("Bank's Properties: ")
-    print(len(bank.properties))
-    print([property for property in bank.properties])
-    print("")
 
     # determine who will begin the game:
     player_order = determinePlayOrder(len(player_list))
 
     players = [player_list[player_number] for player_number in  player_order]
 
+    printmessage("Play Order: " + str([p.name for p in players]))
+    printmessage("")
 
     number_of_throws_each = 0
+    printmessage("****************** PLAY BEGINS ******************")
 
     while ( True ): # while all players have cash
 
         # for each player, check if cash == 0 and add them to losers.
         losers = [ p for p in players if p.cash <= 0 ]
 
-        if(number_of_throws_each >= 1):
-            break
         # remove  losers from players list
         for p in losers:
             players.remove(p)
 
         # after removing all losers, if there is only one player left, he is the winner.
         if (len(players) == 1):
-            return players[0]
+            break
+            #return players[0]
 
-        print("Play begins........................")
+
 
         for player in players:
 
             # Player rolls dice to determine new position
+            printmessage("player name: " + player.name)
             player.play()
-            print("player name: ",player.name)
-            print ("sum rolled:",player.list_of_numbers_rolled)
-            print("square number visited: ",player.locations_visited_by_player)
-            print( "square visited: ", board.get_square( player.locations_visited_by_player[-1] ).title )
-            print("")
-            print("*******************")
+            #print ("sum rolled:",player.list_of_numbers_rolled)
+            #printmessage("square number visited: ",player.locations_visited_by_player)
+            #printmessage( "square visited: ", board.get_square( player.locations_visited_by_player[-1] ).title )
+            #printmessage("")
+            printmessage("*******************")
+            if(player.cash > 10000):
+                printmessage("too much")
 
-            number_of_throws_each += 1
-        board.print()
-        print("Bank's liquid cash: ",bank.cash)
+        number_of_throws_each += 1
+        board.printmessage()
+
+    board.printmessage()
+    printmessage("Bank's liquid cash: " + str(bank.cash))
+    printmessage("****************** PLAY ENDS ******************")
+    printmessage("")
+    printmessage("")
+    printmessage("number_of_throws_each: " + str(number_of_throws_each))
     return
 
 
