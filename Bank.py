@@ -1,5 +1,6 @@
 import math
 import collections
+from util import *
 
 class Singleton:
      def __init__(self, decorated):
@@ -31,7 +32,15 @@ class Bank:
         self.properties = []
         self.realestate_houses = 32
         self.realestate_hotels = 12
-        self.title = "The Bank"
+        self.name = "The Bank"
+
+    def pay_cash(self, receiver, amount):
+        if (self.cash < amount):
+            raise ValueError('Do not have cash to pay', "bank",  receiver.name)
+        self.cash -= amount
+        receiver.cash += amount
+        printmessage(str(self.name) + " pays $" + str(amount) + " to " + str(receiver.name))
+
 
     def add_property(self, property):
         self.properties.append(property)
@@ -40,7 +49,8 @@ class Bank:
         self.properties.remove(property)
 
     def __str__(self):
-        return self.title
+        return self.name
 
     def __repr__(self):
-        return self.title
+        return self.name
+
