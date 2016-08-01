@@ -263,24 +263,16 @@ class MonopolyBoard:
 
     def printmessage(self):
         printmessage("")
-        printmessage("")
         printmessage("********* MONOPOLY BOARD STATUS***************")
         printmessage("Bank's cash: " + str(self.bank.cash))
+        printmessage("**********************************")
         for player in self.players:
             printmessage(player.name + ": ")
             printmessage("Current Location : "+ str(player.location_on_board))
             printmessage("Cash Owned:"+ str(player.cash))
             printmessage("Properties Owned:" + str(player.properties))
-            print ("**********************************")
-        #self.printChanceCardDeck()
-        #printmessage("**********************************")
-        #self.printCommunityChestCardDeck()
-        #printmessage("**********************************")
-
-
-
-
-
+            printmessage("**********************************")
+        printmessage("********* MONOPOLY BOARD STATUS ENDS ***************")
 
 
 
