@@ -137,29 +137,33 @@ class MonopolyBoard:
         self.squares[39] = boardwalk
 
         # Railroad Companies
-        title_deed_info_rr = (25, 50, 100, 200, 100)
-        reading_rr = RailRoad(5,  "Reading RailRoad",  200,  title_deed_info_rr)
+        title_deed_info_rr = (25, 100)
+        rr_price = 200
+
+        reading_rr = RailRoad(5,  "Reading RailRoad",  rr_price,  title_deed_info_rr)
         self.squares[5] = reading_rr
 
-        title_deed_info_rr = (25, 50, 100, 200, 100)
-        penn_rr = RailRoad(15, "Pennsylvania RailRoad",  200,  title_deed_info_rr)
+
+        penn_rr = RailRoad(15, "Pennsylvania RailRoad",  rr_price,  title_deed_info_rr)
         self.squares[15] = penn_rr
 
-        title_deed_info_rr = (25, 50, 100, 200, 100)
-        b_and_o_rr = RailRoad(25,  "B. & O. RailRoad",  200, title_deed_info_rr)
+
+        b_and_o_rr = RailRoad(25,  "B. & O. RailRoad",  rr_price, title_deed_info_rr)
         self.squares[25] = b_and_o_rr
 
-        title_deed_info_rr = (25, 50, 100, 200, 100)
-        b_and_o_rr = RailRoad(35,  "Short Line RailRoad",  200, title_deed_info_rr)
+
+        b_and_o_rr = RailRoad(35,  "Short Line RailRoad",  rr_price, title_deed_info_rr)
         self.squares[35] = b_and_o_rr
 
         # Utility Companies
-        title_deed_info_u = (4,10)
-        electric_company = Utility(12, "Electric Company", 150,  title_deed_info_u)
+        title_deed_info_u = (4,10,75)
+        uc_price = 150
+
+        electric_company = Utility(12, "Electric Company", uc_price,  title_deed_info_u)
         self.squares[12] = electric_company
 
-        title_deed_info_u = (4, 10)
-        water_works = Utility(28,  "Water Works",  150,  title_deed_info_u)
+
+        water_works = Utility(28,  "Water Works",  uc_price,  title_deed_info_u)
         self.squares[28] = water_works
 
         # Income Tax

@@ -53,28 +53,48 @@ class Land(Property):
         if self.owner == Square.bank:
             Property.buy_property(self, player)
         elif self.owner != player:
-            # pay rent to owner
-            printmessage("Pays rent of $"+ str(self.rent_of_unimproved_lot) + " to " +self.owner.name)
-            player.pay_cash(self.owner, self.rent_of_unimproved_lot)
+
+            # To determine rent, check if owner owns other properties in the same color group.
+            number_of_lots_owner_has_in_same_color_grp = 0
+            for p in self.owner.properties:
+                # A player may own Land, Railroad or utility companies.
+                # Color groups exist only for Land type of properties.
+                if type(p) is Land:
+                    if p.colorGroup == self.colorGroup:
+                        number_of_lots_owner_has_in_same_color_grp += 1
+
+            if (number_of_lots_owner_has_in_same_color_grp == 2 and p.colorGroup in ["Purple", "Dark Blue"]) or \
+                    number_of_lots_owner_has_in_same_color_grp == 3:
+                rent = self.rent_of_unimproved_lot * 2
+            else:
+                rent = self.rent_of_unimproved_lot
+
+            printmessage("Pays rent to owner.")
+            player.pay_cash(self.owner, rent)
 
 class RailRoad(Property):
     def __init__(self, _position,  _title, _price,  _title_deed_info):
         Property.__init__(self, _position,  _title, _price)
-        self.rent_1_rr, self.rent_2_rr, self.rent_3_rr, self.rent_4_rr, self.mortgage_value = _title_deed_info
+        self.rr_base_rent,  self.mortgage_value = _title_deed_info
 
 
     def take_action(self, player):
         if self.owner == Square.bank:
             Property.buy_property(self, player)
         elif self.owner != player:
-            # pay rent to owner
-            printmessage("Pays rent of $" + str(self.rent_1_rr) + " to " + self.owner.name)
-            player.pay_cash( self.owner, self.rent_1_rr)
+            # To determine rent, check how many rail road companies owner owns.
+            number_of_rr_owner_has = 0
+            for p in self.owner.properties:
+                if type(p) is RailRoad:
+                    number_of_rr_owner_has += 1
+            rent = number_of_rr_owner_has * self.rr_base_rent
+            printmessage("Pays rent to owner.")
+            player.pay_cash( self.owner, rent)
 
 class Utility(Property):
     def __init__(self, _position,  _title, _price,  _title_deed_info):
         Property.__init__(self, _position, _title, _price)
-        self.rent_1_uc, self.rent_2_uc = _title_deed_info
+        self.rent_1_uc_factor, self.rent_2_uc_factor, self.mortgage_value = _title_deed_info
 
 
     def take_action(self, player):
@@ -82,8 +102,21 @@ class Utility(Property):
             Property.buy_property(self, player)
         elif self.owner != player:
             # pay rent to owner
-            printmessage("Pays rent of $" + str(self.rent_1_uc) + " to " + self.owner.name)
-            player.pay_cash(self.owner, self.rent_1_uc)
+            # To determine rent, check how many utility companies owner owns.
+            number_of_uc_owner_has = 0
+            for p in self.owner.properties:
+                if type(p) is Utility:
+                    number_of_uc_owner_has += 1
+
+            if  number_of_uc_owner_has == 1:
+                rent = self.rent_1_uc_factor * player.sum_of_numbers_rolled_on_dice
+
+            elif number_of_uc_owner_has == 2:
+                rent = self.rent_2_uc_factor *  player.sum_of_numbers_rolled_on_dice
+
+            printmessage("Pays rent to owner.")
+            player.pay_cash(self.owner, rent)
+
 
 
 class Go(Square):
