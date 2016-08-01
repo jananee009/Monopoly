@@ -26,8 +26,7 @@ class Property(Square):
         if self.owner == Square.bank:
             if(player.cash >= self.price):
                 printmessage("Buys " + self.title)
-                player.cash -= self.price
-                Square.bank.cash += self.price
+                player.pay_cash(Square.bank, self.price)
                 self.change_owner(player)
 
 
@@ -38,16 +37,11 @@ class Property(Square):
         _owner.add_property(self)
 
     def __str__(self):
-        #return self.title + ", " + str(self.owner)
         return self.title
 
     def __repr__(self):
-        #return self.title + ", " + str(self.owner)
         return  self.title
 
-def move_cash(giver, receiver, cash):
-    giver.cash -= cash
-    receiver.cash += cash
 
 class Land(Property):
     def __init__(self, _position,  _title, _price, _title_deed_info):
@@ -59,7 +53,9 @@ class Land(Property):
         if self.owner == Square.bank:
             Property.buy_property(self, player)
         elif self.owner != player:
-            move_cash(player, self.owner, self.rent_of_unimproved_lot)
+            # pay rent to owner
+            printmessage("Pays rent of $"+ str(self.rent_of_unimproved_lot) + " to " +self.owner.name)
+            player.pay_cash(self.owner, self.rent_of_unimproved_lot)
 
 class RailRoad(Property):
     def __init__(self, _position,  _title, _price,  _title_deed_info):
@@ -71,7 +67,9 @@ class RailRoad(Property):
         if self.owner == Square.bank:
             Property.buy_property(self, player)
         elif self.owner != player:
-            move_cash(player, self.owner, self.rent_1_rr)
+            # pay rent to owner
+            printmessage("Pays rent of $" + str(self.rent_1_rr) + " to " + self.owner.name)
+            player.pay_cash( self.owner, self.rent_1_rr)
 
 class Utility(Property):
     def __init__(self, _position,  _title, _price,  _title_deed_info):
@@ -83,7 +81,9 @@ class Utility(Property):
         if self.owner == Square.bank:
             Property.buy_property(self, player)
         elif self.owner != player:
-            move_cash(player, self.owner, self.rent_1_uc)
+            # pay rent to owner
+            printmessage("Pays rent of $" + str(self.rent_1_uc) + " to " + self.owner.name)
+            player.pay_cash(self.owner, self.rent_1_uc)
 
 
 class Go(Square):
@@ -91,25 +91,23 @@ class Go(Square):
         Square.__init__(self, _position, _title)
 
     def take_action(self, player):
-        player.cash += 200
-        Square.bank.cash -= 200
+        Square.bank.pay_cash( player, 200)
 
 
 class Tax(Square):
     def __init__(self, _position, _title, tax):
         Square.__init__(self, _position, _title)
         self.tax = tax
-        #self.bank = _bank
+
 
     def take_action(self, player):
-        player.cash -= self.tax
-        Square.bank.cash += self.tax
+        player.pay_cash(Square.bank, self.tax)
 
 class Jail(Square):
     def __init__(self, _position, _title, fine):
         Square.__init__(self, _position, _title)
         self.fine  = fine
-        #self.bank = _bank
+
 
     # to do
     def take_action(self, player):
@@ -117,11 +115,10 @@ class Jail(Square):
             pass
         else:
             # player is sent to jail. He will pay fine to get out.
-            player.cash -= self.fine
-            Square.bank.cash += self.fine
-            player.just_visiting_jail = True
-    # find out if player is "Just Visiting" or "sent to jail".
-    # if   "sent to jail" do something
+            printmessage("Player has to pay fine. " )
+            player.pay_cash(Square.bank, self.fine)
+            player.just_visiting_jail = True # player has paid fine. Hence he can get out of jail.
+
 
 class GoToJailSquare(Square):
     def __init__(self, _position, _title, jail):
