@@ -28,12 +28,13 @@ class Player(Actor):
         return val
 
     def roll_dice(self):
-        interactive = True
+        interactive = False
         if(interactive):
             dice1 = self.get_dice_value_interactively('Enter the first dice roll:')
             dice2 = self.get_dice_value_interactively('Enter the second dice roll:')
         else:
             dice1, dice2 = self.set_dice_roll()
+
         self.sum_of_numbers_rolled_on_dice = dice1 + dice2  # sum of the numbers rolled on both dice.
         self.list_of_numbers_rolled.append(self.sum_of_numbers_rolled_on_dice)
 
@@ -92,7 +93,7 @@ class Player(Actor):
             printmessage("Player's location on board: " + str(self.location_on_board))
 
 
-        self.locations_visited_by_player.append(self.location_on_board)
+        #self.locations_visited_by_player.append(self.location_on_board)
 
 
 
@@ -110,8 +111,11 @@ class Player(Actor):
 
         printmessage("player lands on square: " + square.title)
 
-        square.take_action(self)
+        #square.take_action(self)
 
-        printmessage("player's cash: "+ str(self.cash))
+        self.locations_visited_by_player.append(self.location_on_board)
+
+        #printmessage("player's cash: "+ str(self.cash))
+        square.take_action(self)
 
         return
