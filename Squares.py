@@ -124,7 +124,7 @@ class Go(Square):
         Square.__init__(self, _position, _title)
 
     def take_action(self, player):
-        Square.bank.pay_cash( player, 200)
+        pass
 
 
 class Tax(Square):
@@ -160,11 +160,10 @@ class GoToJailSquare(Square):
 
     def take_action(self, player):
         player.just_visiting_jail = False
-        player.location_on_board = self.jail.location_of_square_on_board
-        self.jail.take_action(player)
+        player.sum_of_numbers_rolled_on_dice = 20
+        player.move_and_take_action()
 
-    # to do
-    # implement "sending the player to jail" method
+
 
 class CommunityChest(Square):
     def __init__(self, _position, _title, community_chest_card_deck):
